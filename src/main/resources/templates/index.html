@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+  lang="de"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Like Hero To Zero | Dashboard</title>
+    <!-- Bootstrap 5 für modernes CSS-Styling -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+      }
+      .hero-gradient {
+        background: linear-gradient(135deg, #198754 0%, #0d6efd 100%);
+      }
+      .navbar-dark .navbar-nav .nav-link {
+        color: rgba(255, 255, 255, 0.8);
+      }
+      .card {
+        border: none;
+        border-radius: 12px;
+      }
+      .table thead th {
+        background-color: #f8f9fa;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 0.05em;
+        border-bottom: 2px solid #dee2e6;
+      }
+      .btn-success {
+        background-color: #198754;
+        border: none;
+      }
+      .status-badge {
+        font-size: 0.85rem;
+        padding: 0.5rem 1rem;
+        border-radius: 50px;
+      }
+    </style>
+  </head>
+  <body class="bg-light">
+    <!-- Navigation -->
+    <nav
+      class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow-sm"
+    >
+      <div class="container">
+        <a class="navbar-brand fw-bold" th:href="@{/}">
+          <span class="text-success">Hero</span> To Zero
+        </a>
+
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto align-items-center">
+            <!-- OPTIONALER LOGIN: Nur sichtbar, wenn der User NICHT eingeloggt ist -->
+            <li class="nav-item" sec:authorize="isAnonymous()">
+              <a
+                th:href="@{/login}"
+                class="btn btn-outline-success btn-sm px-4 fw-bold"
+                >Anmelden</a
+              >
+            </li>
+
+            <!-- BENUTZER-MENÜ: Nur sichtbar, wenn der User eingeloggt ist -->
+            <li
+              class="nav-item d-flex align-items-center"
+              sec:authorize="isAuthenticated()"
+            >
+              <div
+                class="bg-white bg-opacity-10 rounded-pill px-3 py-1 d-flex align-items-center border border-secondary"
+              >
+                <span class="text-white small me-3">
+                  <span class="opacity-50">Admin:</span>
+                  <span class="fw-bold" sec:authentication="name"
+                    >Benutzer</span
+                  >
+                </span>
+                <form th:action="@{/logout}" method="post" class="m-0">
+                  <button
+                    type="submit"
+                    class="btn btn-link btn-sm text-danger p-0 fw-bold shadow-none"
+                    style="text-decoration: none"
+                  >
+                    Logout
+                  </button>
+                </form>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Header Sektion -->
+    <header class="hero-gradient text-white py-5 mb-4">
+      <div class="container text-center">
+        <h1 class="display-4 fw-bold mb-2">
+          Globale CO<sub>2</sub> Überwachung
+        </h1>
+        <p class="lead opacity-75">
+          Transparente Daten für eine nachhaltige Zukunft.
+        </p>
+      </div>
+    </header>
+
+    <main class="container mb-5">
+      <div class="row">
+        <!-- Filter-Spalte -->
+        <div class="col-lg-4 mb-4">
+          <div class="card shadow-sm border-0 h-100">
+            <div class="card-body p-4">
+              <h5 class="card-title fw-bold mb-4">Daten filtern</h5>
+              <form th:action="@{/}" method="get">
+                <div class="mb-4">
+                  <label
+                    for="countrySelect"
+                    class="form-label small fw-bold text-muted"
+                    >Region auswählen</label
+                  >
+                  <select
+                    name="country"
+                    id="countrySelect"
+                    class="form-select form-select-lg border-2"
+                  >
+                    <option
+                      value="Alle"
+                      th:selected="${selectedCountry == 'Alle Länder'}"
+                    >
+                      Alle Länder anzeigen
+                    </option>
+                    <option
+                      th:each="c : ${countries}"
+                      th:value="${c}"
+                      th:text="${c}"
+                      th:selected="${c == selectedCountry}"
+                    >
+                      Land
+                    </option>
+                  </select>
+                </div>
+                <div class="d-grid">
+                  <button
+                    type="submit"
+                    class="btn btn-success btn-lg fw-bold shadow-sm"
+                  >
+                    Daten abrufen
+                  </button>
+                </div>
+              </form>
+
+              <div class="mt-4 pt-4 border-top">
+                <div class="d-flex align-items-center text-muted">
+                  <div class="ms-1 small">
+                    <span sec:authorize="isAnonymous()">
+                      <i class="bi bi-info-circle"></i> Sie befinden sich im
+                      <strong>Lese-Modus</strong>. Melden Sie sich an, um Daten
+                      zu erfassen.
+                    </span>
+                    <span sec:authorize="isAuthenticated()">
+                      <i class="bi bi-shield-check text-success"></i> Sie haben
+                      <strong>Schreibrechte</strong>. Sie können nun neue Werte
+                      einreichen.
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Daten-Tabelle -->
+        <div class="col-lg-8">
+          <div class="card shadow-sm overflow-hidden border-0">
+            <div
+              class="card-header bg-white py-3 d-flex justify-content-between align-items-center border-bottom"
+            >
+              <h5 class="mb-0 fw-bold text-dark">
+                Ergebnisse für:
+                <span class="text-success" th:text="${selectedCountry}"
+                  >Deutschland</span
+                >
+              </h5>
+              <!-- Button nur für Admins sichtbar -->
+              <button
+                sec:authorize="isAuthenticated()"
+                class="btn btn-primary btn-sm fw-bold"
+              >
+                + Daten hinzufügen
+              </button>
+            </div>
+            <div class="table-responsive">
+              <table class="table table-hover align-middle mb-0">
+                <thead>
+                  <tr>
+                    <th class="ps-4">Region / Land</th>
+                    <th>Zeitraum</th>
+                    <th class="text-end pe-4">
+                      CO<sub>2</sub> Ausstoß (Tonnen)
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr th:each="data : ${co2DataList}">
+                    <td
+                      class="ps-4 fw-semibold text-dark"
+                      th:text="${data.country}"
+                    >
+                      Land
+                    </td>
+                    <td class="text-muted" th:text="${data.year}">2023</td>
+                    <td class="text-end pe-4">
+                      <span
+                        class="badge bg-success bg-opacity-10 text-success fs-6 fw-bold"
+                        th:text="${data.co2Value != null ? #numbers.formatDecimal(data.co2Value, 1, 2, 'COMMA') + ' t' : '0,00 t'}"
+                      >
+                        0,00 t
+                      </span>
+                    </td>
+                  </tr>
+                  <tr th:if="${co2DataList.empty}">
+                    <td colspan="3" class="text-center py-5">
+                      <p class="text-muted mb-0 italic">
+                        Keine Datensätze gefunden.
+                      </p>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="bg-dark text-white-50 py-4 mt-5">
+      <div class="container text-center">
+        <small
+          >&copy; 2024 Like Hero To Zero Dashboard. Alle Rechte
+          vorbehalten.</small
+        >
+      </div>
+    </footer>
+
+    <!-- Bootstrap JS für interaktive Elemente (Dropdowns etc.) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
