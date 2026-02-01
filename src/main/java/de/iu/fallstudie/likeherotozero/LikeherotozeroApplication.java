@@ -8,6 +8,7 @@ public class LikeherotozeroApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(LikeherotozeroApplication.class, args);
+		System.out.println("LikeHeroToZero Anwendung erfolgreich gestartet!");
 	}
 
 }
