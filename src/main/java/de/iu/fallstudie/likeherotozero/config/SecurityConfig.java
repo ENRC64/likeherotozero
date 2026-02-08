@@ -22,16 +22,14 @@ public class SecurityConfig {
   public SecurityFilterChain securityFilterChain(HttpSecurity http)
     throws Exception {
     http
-      .authorizeHttpRequests(
-        auth ->
-          auth
-            // Statische Ressourcen und die Startseite explizit für JEDEN freigeben
-            .requestMatchers("/", "/login", "/css/**", "/js/**", "/images/**")
-            .permitAll()
-            // Nur geschützte Pfade (z.B. /add-data) bräuchten einen Login
-            // .requestMatchers("/add-data").authenticated()
-            .anyRequest()
-            .permitAll() // Vorerst alles erlauben, damit die Seite lädt
+      .authorizeHttpRequests(auth ->
+        auth
+          .requestMatchers("/", "/login", "/css/**", "/js/**", "/images/**")
+          .permitAll()
+          .requestMatchers("/add")
+          .authenticated() // Diese Zeile hinzufügen!
+          .anyRequest()
+          .permitAll()
       )
       .formLogin(form ->
         form.loginPage("/login").defaultSuccessUrl("/", true).permitAll()

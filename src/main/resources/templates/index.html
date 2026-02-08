@@ -200,12 +200,12 @@
                 >
               </h5>
               <!-- Button nur für Admins sichtbar -->
-              <button
+              <a
+                th:href="@{/add}"
                 sec:authorize="isAuthenticated()"
                 class="btn btn-primary btn-sm fw-bold"
+                >+ Daten hinzufügen</a
               >
-                + Daten hinzufügen
-              </button>
             </div>
             <div class="table-responsive">
               <table class="table table-hover align-middle mb-0">
